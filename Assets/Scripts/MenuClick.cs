@@ -8,7 +8,5 @@ public class MenuClick : MonoBehaviour {
 
 	// Use this for initialization
 
-	void TaskOnClick(){
-		SceneManager.LoadScene ("Arrow", LoadSceneMode.Single);
-	}
+	
 }

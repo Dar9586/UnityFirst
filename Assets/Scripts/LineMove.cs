@@ -5,11 +5,12 @@ using UnityEngine.UI;
 
 public class LineMove : MonoBehaviour {
     public static float speed=0.1f;
-    static uint score=0;
+    public static uint score=0;
     // Use this for initialization
     private void OnTriggerEnter2D(Collider2D collision) {
+        if(collision.gameObject.name=="Triangle") { 
         GameObject.Find("Score").GetComponent<Text>().text="Punteggio: "+score.ToString();
-        speed=0;
+        speed=0;}
         
     }
     // Update is called once per frame

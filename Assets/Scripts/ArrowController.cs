@@ -1,58 +1,37 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class ArrowControlller : MonoBehaviour {
+public class ArrowController : MonoBehaviour {
     public short pos=2;
     public Transform obj;
     float lastSpeed=1.0f;
-    public float speedGen=1.0f;
+    public static float speedGen=1.0f;
     short[] poss= {-4,-2,0,2,4};
-    public float minSwipeDistY=25;
-	public float minSwipeDistX=25;
     bool stopped=false;
-	private Vector2 startPos;
     private void Start() {
         InvokeRepeating("InstanceObj",0.0f,speedGen);
-        InvokeRepeating("increaseSpeed",0.0f,0.7f);
     }
     void increaseSpeed() {
         LineMove.speed+=0.1f;
         if(speedGen>0.1f)speedGen-=0.05f;
     }
     void InstanceObj() {
-        Instantiate(obj,new Vector3(14,poss[Random.Range(0,5)%5],0),Quaternion.identity);
+        Instantiate(obj,new Vector3(14,poss[Random.Range(0,5)%5],0),Quaternion.identity)
+            .GetComponent<Renderer>().transform.localScale=new Vector3(Random.Range(0.5f,2f),0.05f,1f);
     }
     // Update is called once per frame
     void Update () {
 #if UNITY_ANDROID
-        if (Input.touchCount > 0) {
-            restartGame();
-			Touch touch = Input.touches[0];
-			switch (touch.phase){
-				case TouchPhase.Began:startPos = touch.position;break;
-				case TouchPhase.Ended:float swipeDistVertical = (new Vector3(0, touch.position.y, 0) - new Vector3(0, startPos.y, 0)).magnitude;
-                    if(swipeDistVertical<10){restartGame();}
-        if (swipeDistVertical > minSwipeDistY){
-						float swipeValue = Mathf.Sign(touch.position.y - startPos.y);
-						if (swipeValue > 0){goUp();}
-						else if (swipeValue < 0){goDown(); }
-					}
-					float swipeDistHorizontal = (new Vector3(touch.position.x,0, 0) - new Vector3(startPos.x, 0, 0)).magnitude;
-					if (swipeDistHorizontal > minSwipeDistX){
-						
-						float swipeValue = Mathf.Sign(touch.position.x - startPos.x);
-						
-						if (swipeValue > 0){ }//right
-                        else if (swipeValue < 0){ }//left
-					}break;
-			}
-		}
+        if(SwipeManager.swipeDirection==Swipe.Up)goUp();
+        else if(SwipeManager.swipeDirection==Swipe.Down)goDown();
+        else if(SwipeManager.swipeDirection==Swipe.Left)restartGame();
+        SwipeManager.swipeDirection=Swipe.None;
 #else
 
-		if(Input.GetKeyDown(KeyCode.UpArrow)&&pos<4&&LineMove.speed!=0) {
+		if(Input.GetKeyDown(KeyCode.UpArrow)) {
             goUp();
         }
-        else if(Input.GetKeyDown(KeyCode.DownArrow)&&pos>0&&LineMove.speed!=0) {
+        else if(Input.GetKeyDown(KeyCode.DownArrow)&&) {
             goDown();
         }
         else if(Input.GetKeyDown(KeyCode.Space)) {
@@ -73,9 +52,11 @@ public class ArrowControlller : MonoBehaviour {
     }
     void restartGame() {
         if(LineMove.speed!=0f)return;
+        float s=0;
+        while(s<10) {s+=Time.deltaTime; }
         GameObject.Find("Score").GetComponent<Text>().text="";
         stopped=false;
-        gameObject.GetComponent<Renderer>().transform.position=new Vector3(-7f,0,0);
+        gameObject.GetComponent<Renderer>().transform.position=new Vector3(-8f,0,0);
         pos=2;
         speedGen=1.0f;
         LineMove.speed=0.1f;
@@ -84,18 +65,20 @@ public class ArrowControlller : MonoBehaviour {
         }
         LineMove.score=0;
         InvokeRepeating("InstanceObj",0.0f,speedGen);
-        InvokeRepeating("increaseSpeed",0.0f,0.7f);
-        
     }
     void goUp() {
+        if(pos<4&&LineMove.speed!=0) { 
         pos++;
         Vector3 k=gameObject.GetComponent<Renderer>().transform.position;
         gameObject.GetComponent<Renderer>().transform.Translate(new Vector3(-2,0,0));
+            }
     }
     void goDown() {
+        if(pos>0&&LineMove.speed!=0) { 
         pos--;
         Vector3 k=gameObject.GetComponent<Renderer>().transform.position;
         gameObject.GetComponent<Renderer>().transform.Translate(new Vector3(2,0,0));
+            }
     }
 }
 

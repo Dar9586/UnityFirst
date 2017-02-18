@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class LineMove : MonoBehaviour {
@@ -20,6 +18,10 @@ public class LineMove : MonoBehaviour {
 	}
     private void OnDestroy() {
         score++;
+        if(score%10==0) {
+            speed+=0.1f;
+        if(ArrowController.speedGen>0.1f)ArrowController.speedGen-=0.05f;
+        }
     }
     private void OnBecameInvisible() {
         if(gameObject.name.Contains("Clone")) {Destroy(gameObject);}

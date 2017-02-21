@@ -4,7 +4,7 @@ public enum Swipe { None, Up, Down, Left, Right };
  
 public class SwipeManager : MonoBehaviour
 {
-    public float minSwipeLength = 200f;
+    public float minSwipeLength = 50f;
     Vector2 firstPressPos;
     Vector2 secondPressPos;
     Vector2 currentSwipe;
@@ -16,7 +16,21 @@ public class SwipeManager : MonoBehaviour
     {
         DetectSwipe();
     }
- 
+    void executeCheck() {
+                // Swipe up
+                if (currentSwipe.y > 0 && currentSwipe.x > -0.5f && currentSwipe.x < 0.5f) {
+                    swipeDirection = Swipe.Up;canMove=false;
+                // Swipe down
+                } else if (currentSwipe.y < 0 && currentSwipe.x > -0.5f && currentSwipe.x < 0.5f) {
+                    swipeDirection = Swipe.Down;canMove=false;
+                // Swipe left
+                } else if (currentSwipe.x < 0 && currentSwipe.y > -0.5f && currentSwipe.y < 0.5f) {
+                    swipeDirection = Swipe.Left;canMove=false;
+                // Swipe right
+                } else if (currentSwipe.x > 0 && currentSwipe.y > -0.5f && currentSwipe.y < 0.5f) {
+                    swipeDirection = Swipe.Right;canMove=false;
+                }
+    }
     public void DetectSwipe ()
     {
         if (Input.touches.Length > 0) {
@@ -36,22 +50,11 @@ public class SwipeManager : MonoBehaviour
                     return;
                 }
                 currentSwipe.Normalize();
- 
-                // Swipe up
-                if (currentSwipe.y > 0 && currentSwipe.x > -0.5f && currentSwipe.x < 0.5f) {
-                    swipeDirection = Swipe.Up;canMove=false;
-                // Swipe down
-                } else if (currentSwipe.y < 0 && currentSwipe.x > -0.5f && currentSwipe.x < 0.5f) {
-                    swipeDirection = Swipe.Down;canMove=false;
-                // Swipe left
-                } else if (currentSwipe.x < 0 && currentSwipe.y > -0.5f && currentSwipe.y < 0.5f) {
-                    swipeDirection = Swipe.Left;canMove=false;
-                // Swipe right
-                } else if (currentSwipe.x > 0 && currentSwipe.y > -0.5f && currentSwipe.y < 0.5f) {
-                    swipeDirection = Swipe.Right;canMove=false;
-                }
+                executeCheck();
+                
              }
              else if(t.phase == TouchPhase.Ended) {
+                if(canMove)executeCheck();
                 canMove=true;
             }
         }
